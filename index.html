@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fantasy Baseball Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0e1a; --surface: #111827; --surface2: #1a2236;
+    --border: rgba(255,255,255,0.07); --accent: #3b82f6; --accent2: #f59e0b;
+    --green: #10b981; --red: #ef4444; --text: #f1f5f9; --muted: #64748b;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:var(--bg); color:var(--text); font-family:'DM Sans',sans-serif; min-height:100vh; }
+
+  header { padding:28px 32px 0; display:flex; align-items:flex-end; justify-content:space-between; gap:16px; flex-wrap:wrap; }
+  .logo { font-family:'Bebas Neue',sans-serif; font-size:42px; letter-spacing:2px; line-height:1; }
+  .logo span { color:var(--accent2); }
+  .subtitle { font-size:13px; color:var(--muted); letter-spacing:2px; margin-top:5px; font-family:'DM Sans',sans-serif; font-weight:500; }
+  .header-right { display:flex; align-items:center; gap:12px; }
+  .last-updated { font-size:11px; color:var(--muted); }
+  .refresh-btn { background:var(--accent); color:#fff; border:none; border-radius:8px; padding:8px 16px; font-family:'DM Sans',sans-serif; font-size:13px; font-weight:500; cursor:pointer; display:flex; align-items:center; gap:6px; transition:opacity 0.2s; }
+  .refresh-btn:hover { opacity:0.85; }
+  .refresh-btn:disabled { opacity:0.5; cursor:not-allowed; }
+  .spin { animation:spin 1s linear infinite; display:inline-block; }
+  @keyframes spin { to { transform:rotate(360deg); } }
+
+  .tabs-row { display:flex; align-items:flex-end; justify-content:space-between; padding:24px 32px 0; }
+  .tabs { display:flex; gap:4px; }
+  .tab { padding:10px 24px; border-radius:10px 10px 0 0; font-size:14px; font-weight:500; cursor:pointer; border:1px solid transparent; border-bottom:none; transition:all 0.2s; color:var(--muted); background:transparent; }
+  .tab.active { background:var(--surface); color:var(--text); border-color:var(--border); }
+  .tab:not(.active):hover { color:var(--text); }
+
+  .mode-toggle { display:flex; background:var(--surface2); border:1px solid var(--border); border-radius:8px; padding:3px; gap:2px; margin-bottom:3px; }
+  .mode-btn { padding:6px 18px; border-radius:6px; font-size:12px; font-weight:500; cursor:pointer; color:var(--muted); transition:all 0.15s; user-select:none; }
+  .mode-btn.active { background:var(--accent); color:#fff; }
+  .mode-btn:not(.active):hover { color:var(--text); }
+
+  main { padding:0 32px 40px; }
+  .panel { display:none; background:var(--surface); border:1px solid var(--border); border-radius:0 12px 12px 12px; overflow:hidden; }
+  .panel.active { display:block; }
+
+  .mode-label { font-size:10px; letter-spacing:2px; text-transform:uppercase; color:var(--accent); padding:12px 20px 0; font-weight:600; }
+  .summary-bar { display:flex; gap:16px 28px; padding:12px 20px 16px; border-bottom:1px solid var(--border); flex-wrap:wrap; }
+  .stat-card { display:flex; flex-direction:column; gap:2px; }
+  .stat-card-label { font-size:10px; letter-spacing:1.5px; text-transform:uppercase; color:var(--muted); }
+  .stat-card-value { font-family:'Bebas Neue',sans-serif; font-size:22px; letter-spacing:1px; color:var(--accent2); }
+
+  .table-wrap { overflow-x:auto; }
+  table { width:100%; border-collapse:collapse; font-size:13px; }
+  thead th { padding:10px 14px; text-align:left; font-size:10px; font-weight:600; letter-spacing:1.5px; text-transform:uppercase; color:var(--muted); background:var(--surface2); border-bottom:1px solid var(--border); white-space:nowrap; cursor:pointer; user-select:none; }
+  thead th:hover { color:var(--text); }
+  tbody tr { border-bottom:1px solid var(--border); transition:background 0.15s; animation:fadeIn 0.3s ease both; }
+  @keyframes fadeIn { from{opacity:0;transform:translateY(4px)} to{opacity:1;transform:none} }
+  tbody tr:hover { background:rgba(255,255,255,0.03); }
+  tbody tr.bench { opacity:0.55; }
+  tbody tr.bench:hover { opacity:1; }
+  td { padding:11px 14px; white-space:nowrap; }
+
+  .pos-badge { display:inline-flex; align-items:center; justify-content:center; min-width:36px; height:22px; border-radius:5px; font-size:10px; font-weight:700; padding:0 4px; }
+
+  /* Team colors per player */
+  .team-BAL { background:rgba(223,112,39,0.2);  color:#DF7027; }  /* 橘 */
+  .team-DET { background:rgba(12,35,64,0.4);    color:#7daee8; }  /* 深藍 */
+  .team-MIL { background:rgba(18,40,75,0.4);    color:#FFC52F; }  /* 深藍黃 */
+  .team-ATL { background:rgba(206,17,65,0.2);   color:#CE1141; }  /* 紅 */
+  .team-LAA { background:rgba(186,0,33,0.2);    color:#f47a7a; }  /* 紅 */
+  .team-SF  { background:rgba(253,90,30,0.2);   color:#FD5A1E; }  /* 橘 */
+  .team-COL { background:rgba(51,0,111,0.25);   color:#c084fc; }  /* 紫 */
+  .team-MIA { background:rgba(0,163,224,0.2);   color:#00A3E0; }  /* 青藍 */
+  .team-PIT { background:rgba(253,184,39,0.2);  color:#FDB827; }  /* 黃 */
+  .team-ATH { background:rgba(0,116,55,0.2);    color:#00A650; }  /* 綠 */
+  .team-PHI { background:rgba(232,24,40,0.2);   color:#E81828; }  /* 紅 */
+  .team-SEA { background:rgba(12,44,86,0.4);    color:#4db8a4; }  /* 青 */
+  .team-LAD { background:rgba(0,90,156,0.25);   color:#6ab4f5; }  /* 藍 */
+  .team-CHC { background:rgba(14,51,134,0.25);  color:#6b9de8; }  /* 藍 */
+  .team-TOR { background:rgba(19,74,142,0.25);  color:#E8291C; }  /* 紅藍 */
+  .team-SD  { background:rgba(47,36,29,0.4);    color:#FFC425; }  /* 棕黃 */
+  .team-TB  { background:rgba(9,44,76,0.4);     color:#8FBCE6; }  /* 藍 */
+  .team-CLE { background:rgba(12,35,64,0.4);    color:#E31937; }
+  .team-NYY { background:rgba(0,48,135,0.25);   color:#8fa8d4; }
+  .team-BOS { background:rgba(189,48,57,0.2);   color:#f47a7a; }
+  .team-HOU { background:rgba(0,45,98,0.3);     color:#EB6E1F; }
+  .team-CWS { background:rgba(39,37,31,0.4);    color:#c0bfb8; }
+  .team-NYM { background:rgba(0,45,114,0.3);    color:#FF5910; }
+  .team-STL { background:rgba(196,30,58,0.2);   color:#C41E3A; }
+  .team-CIN { background:rgba(198,1,31,0.2);    color:#f47a7a; }
+
+  .player-name { font-weight:500; color:var(--text); }
+  .player-team { font-size:11px; color:var(--muted); margin-top:2px; }
+  .stat { font-variant-numeric:tabular-nums; }
+  .stat-good { color:var(--green); font-weight:500; }
+  .stat-bad  { color:var(--red); }
+  .stat-dash { color:var(--muted); }
+  .opp { font-size:11px; color:var(--muted); background:rgba(255,255,255,0.05); padding:2px 7px; border-radius:4px; }
+  .loading-row td { padding:28px; text-align:center; color:var(--muted); font-size:13px; }
+  .error-msg { padding:14px 20px; font-size:12px; color:var(--red); background:rgba(239,68,68,0.05); border-top:1px solid rgba(239,68,68,0.15); }
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <div class="logo">FANTASY <span>BASEBALL</span></div>
+    <div class="subtitle">MiLB TEAM · 2026 Season</div>
+  </div>
+  <div class="header-right">
+    <div class="last-updated" id="last-updated">尚未載入</div>
+    <button class="refresh-btn" id="refresh-btn" onclick="loadAll()">
+      <span id="refresh-icon">↻</span> 更新數據
+    </button>
+  </div>
+</header>
+
+<div class="tabs-row">
+  <div class="tabs">
+    <div class="tab active" onclick="switchTab('batters')">⚾ 打者</div>
+    <div class="tab" onclick="switchTab('pitchers')">💪 投手</div>
+  </div>
+  <div class="mode-toggle">
+    <div class="mode-btn active" id="mode-today" onclick="setMode('today')">今日</div>
+    <div class="mode-btn" id="mode-season" onclick="setMode('season')">本季</div>
+  </div>
+</div>
+
+<main>
+  <!-- BATTERS -->
+  <div class="panel active" id="panel-batters">
+    <div class="mode-label" id="b-mode-lbl">今日數據</div>
+    <div class="summary-bar">
+      <div class="stat-card"><div class="stat-card-label" id="l-AB">今日 AB</div><div class="stat-card-value" id="s-AB">—</div></div>
+      <div class="stat-card"><div class="stat-card-label" id="l-H">今日 H</div><div class="stat-card-value" id="s-H">—</div></div>
+      <div class="stat-card"><div class="stat-card-label" id="l-R">今日 R</div><div class="stat-card-value" id="s-R">—</div></div>
+      <div class="stat-card"><div class="stat-card-label" id="l-HR">今日 HR</div><div class="stat-card-value" id="s-HR">—</div></div>
+      <div class="stat-card"><div class="stat-card-label" id="l-RBI">今日 RBI</div><div class="stat-card-value" id="s-RBI">—</div></div>
+      <div class="stat-card"><div class="stat-card-label" id="l-SB">今日 SB</div><div class="stat-card-value" id="s-SB">—</div></div>
+      <div class="stat-card"><div class="stat-card-label" id="l-BB">今日 BB</div><div class="stat-card-value" id="s-BB">—</div></div>
+      <div class="stat-card"><div class="stat-card-label" id="l-K">今日 K</div><div class="stat-card-value" id="s-K">—</div></div>
+      <div class="stat-card"><div class="stat-card-label" id="l-AVG">今日 AVG</div><div class="stat-card-value" id="s-AVG" style="font-size:18px">—</div></div>
+      <div class="stat-card"><div class="stat-card-label" id="l-OPS">今日 OPS</div><div class="stat-card-value" id="s-OPS" style="font-size:18px">—</div></div>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr>
+          <th>POS</th><th onclick="sortTable('b','name')">球員</th><th>對手</th>
+          <th onclick="sortTable('b','ab')">AB</th><th onclick="sortTable('b','h')">H</th>
+          <th onclick="sortTable('b','r')">R</th><th onclick="sortTable('b','hr')">HR</th>
+          <th onclick="sortTable('b','rbi')">RBI</th><th onclick="sortTable('b','sb')">SB</th>
+          <th onclick="sortTable('b','bb')">BB</th><th onclick="sortTable('b','k')">K</th>
+          <th onclick="sortTable('b','avg')">AVG</th><th onclick="sortTable('b','ops')">OPS</th>
+        </tr></thead>
+        <tbody id="batter-tbody"><tr class="loading-row"><td colspan="13"><span class="spin">↻</span> 正在載入...</td></tr></tbody>
+      </table>
+    </div>
+    <div id="batter-error" class="error-msg" style="display:none"></div>
+  </div>
+
+  <!-- PITCHERS -->
+  <div class="panel" id="panel-pitchers">
+    <div class="mode-label" id="p-mode-lbl">今日數據</div>
+    <div class="summary-bar">
+      <div class="stat-card"><div class="stat-card-label" id="l-IP">今日 IP</div><div class="stat-card-value" id="s-IP">—</div></div>
+      <div class="stat-card"><div class="stat-card-label" id="l-W">今日 W</div><div class="stat-card-value" id="s-W">—</div></div>
+      <div class="stat-card"><div class="stat-card-label" id="l-SV">今日 SV</div><div class="stat-card-value" id="s-SV">—</div></div>
+      <div class="stat-card"><div class="stat-card-label" id="l-PHR">今日 HR</div><div class="stat-card-value" id="s-PHR">—</div></div>
+      <div class="stat-card"><div class="stat-card-label" id="l-PK">今日 K</div><div class="stat-card-value" id="s-PK">—</div></div>
+      <div class="stat-card"><div class="stat-card-label" id="l-HLD">今日 HLD</div><div class="stat-card-value" id="s-HLD">—</div></div>
+      <div class="stat-card"><div class="stat-card-label" id="l-ERA">今日 ERA</div><div class="stat-card-value" id="s-ERA" style="font-size:18px">—</div></div>
+      <div class="stat-card"><div class="stat-card-label" id="l-WHIP">今日 WHIP</div><div class="stat-card-value" id="s-WHIP" style="font-size:18px">—</div></div>
+      <div class="stat-card"><div class="stat-card-label" id="l-QS">今日 QS</div><div class="stat-card-value" id="s-QS">—</div></div>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr>
+          <th>POS</th><th onclick="sortTable('p','name')">球員</th><th>對手</th>
+          <th onclick="sortTable('p','ip')">IP</th><th onclick="sortTable('p','w')">W</th>
+          <th onclick="sortTable('p','sv')">SV</th><th onclick="sortTable('p','hr')">HR</th>
+          <th onclick="sortTable('p','k')">K</th><th onclick="sortTable('p','hld')">HLD</th>
+          <th onclick="sortTable('p','era')">ERA</th><th onclick="sortTable('p','whip')">WHIP</th>
+          <th onclick="sortTable('p','qs')">QS</th>
+        </tr></thead>
+        <tbody id="pitcher-tbody"><tr class="loading-row"><td colspan="12"><span class="spin">↻</span> 正在載入...</td></tr></tbody>
+      </table>
+    </div>
+    <div id="pitcher-error" class="error-msg" style="display:none"></div>
+  </div>
+</main>
+
+<script>
+const BATTERS = [
+  { pos:'C',    name:'Adley Rutschman',   team:'BAL', teamId:110, mlbId:668939, bench:false },
+  { pos:'1B',   name:'Spencer Torkelson', team:'DET', teamId:116, mlbId:679529, bench:false },
+  { pos:'2B',   name:'Brice Turang',      team:'MIL', teamId:158, mlbId:669127, bench:false },
+  { pos:'3B',   name:'Austin Riley',      team:'ATL', teamId:144, mlbId:663586, bench:false },
+  { pos:'SS',   name:'Gunnar Henderson',  team:'BAL', teamId:110, mlbId:683002, bench:false },
+  { pos:'OF',   name:'Jeremiah Jackson',  team:'BAL', teamId:110, mlbId:672515, bench:false },
+  { pos:'OF',   name:'Mike Trout',        team:'LAA', teamId:108, mlbId:545361, bench:false },
+  { pos:'OF',   name:'Heliot Ramos',      team:'SF',  teamId:137, mlbId:671218, bench:false },
+  { pos:'1B',   name:'TJ Rumfield',       team:'COL', teamId:115, mlbId:694497, bench:false },
+  { pos:'C',    name:'Joe Mack',          team:'MIA', teamId:146, mlbId:694168, bench:false },
+  { pos:'BN',   name:"Ryan O'Hearn",      team:'PIT', teamId:134, mlbId:642330, bench:true, posLabel:'1B/OF' },
+  { pos:'BN',   name:'Lawrence Butler',   team:'ATH', teamId:133, mlbId:676474, bench:true, posLabel:'OF' },
+];
+const PITCHERS = [
+  { pos:'SP', name:'Jesús Luzardo',     team:'PHI', teamId:143, mlbId:666142, bench:false },
+  { pos:'SP', name:'Trey Gibson',       team:'BAL', teamId:110, mlbId:700918, bench:false },
+  { pos:'SP', name:'Emerson Hancock',   team:'SEA', teamId:136, mlbId:687261, bench:false },
+  { pos:'SP', name:'Kyle Bradish',      team:'BAL', teamId:110, mlbId:669062, bench:false },
+  { pos:'SP', name:'Jack Flaherty',     team:'DET', teamId:116, mlbId:656427, bench:false },
+  { pos:'SP', name:'Bubba Chandler',    team:'PIT', teamId:134, mlbId:694297, bench:false },
+  { pos:'SP', name:'Shohei Ohtani',     team:'LAD', teamId:119, mlbId:660271, bench:false },
+  { pos:'RP', name:'Trevor Megill',     team:'MIL', teamId:158, mlbId:664913, bench:false },
+  { pos:'RP', name:'Tyler Kinley',      team:'ATL', teamId:144, mlbId:607481, bench:false },
+  { pos:'RP', name:'Daniel Palencia',   team:'CHC', teamId:112, mlbId:686613, bench:false },
+  { pos:'RP', name:'Phil Maton',        team:'CHC', teamId:112, mlbId:641745, bench:false },
+  { pos:'RP', name:'Grant Wolfram',     team:'BAL', teamId:110, mlbId:700360, bench:false },
+  { pos:'IL', name:'Ryan Helsley',      team:'BAL', teamId:110, mlbId:678009, bench:true },
+  { pos:'IL', name:'José Berríos',      team:'TOR', teamId:141, mlbId:621244, bench:true },
+  { pos:'IL', name:'Grayson Rodriguez', team:'LAA', teamId:108, mlbId:683217, bench:true },
+  { pos:'IL', name:'Quinn Priester',    team:'MIL', teamId:158, mlbId:687695, bench:true },
+  { pos:'NA', name:'Lucas Giolito',     team:'SD',  teamId:135, mlbId:628451, bench:true },
+];
+
+const SEASON = 2026;
+const TODAY = new Date().toISOString().split('T')[0];
+const PROXY = 'https://corsproxy.io/?url=';
+let currentMode = 'today';
+let rawBatters = [], rawPitchers = [];
+let sortState = { b:{col:null,dir:1}, p:{col:null,dir:1} };
+let scheduleCache = {};
+
+async function mlbFetch(url) {
+  try { const r=await fetch(url,{signal:AbortSignal.timeout(4000)}); if(r.ok) return r.json(); } catch(e){}
+  return fetch(PROXY+encodeURIComponent(url)).then(r=>r.json());
+}
+
+async function fetchSchedule() {
+  try {
+    const ids=[...new Set([...BATTERS,...PITCHERS].map(p=>p.teamId))];
+    const d=await mlbFetch(`https://statsapi.mlb.com/api/v1/schedule?sportId=1&date=${TODAY}&teamId=${ids.join(',')}&hydrate=team`);
+    scheduleCache={};
+    (d.dates?.[0]?.games||[]).forEach(g=>{
+      const h=g.teams.home,a=g.teams.away;
+      scheduleCache[h.team.id]=`vs ${a.team.abbreviation}`;
+      scheduleCache[a.team.id]=`@ ${h.team.abbreviation}`;
+    });
+  } catch(e){}
+}
+
+async function apiBatter(mlbId, statsType) {
+  try {
+    const d=await mlbFetch(`https://statsapi.mlb.com/api/v1/people/${mlbId}/stats?stats=${statsType}&season=${SEASON}&group=hitting&gameType=R`);
+    let s;
+    if (statsType==='gameLog') {
+      const splits=d?.stats?.[0]?.splits; if(!splits?.length) return null;
+      const g=splits.find(x=>x.date===TODAY)||splits[splits.length-1];
+      s=g.stat; s._date=g.date;
+    } else { s=d?.stats?.[0]?.splits?.[0]?.stat; if(!s) return null; }
+    return {
+      ab:+s.atBats||0, h:+s.hits||0, r:+s.runs||0, hr:+s.homeRuns||0,
+      rbi:+s.rbi||0, sb:+s.stolenBases||0, bb:+s.baseOnBalls||0, k:+s.strikeOuts||0,
+      avg:s.avg||'.---', ops:s.ops||'.---',
+      obp:parseFloat(s.obp||s.onBasePercentage)||0,
+      slg:parseFloat(s.slg||s.sluggingPercentage)||0,
+      pa:+s.plateAppearances||0, date:s._date
+    };
+  } catch(e){ return null; }
+}
+
+async function apiPitcher(mlbId, statsType) {
+  try {
+    const d=await mlbFetch(`https://statsapi.mlb.com/api/v1/people/${mlbId}/stats?stats=${statsType}&season=${SEASON}&group=pitching&gameType=R`);
+    let s;
+    if (statsType==='gameLog') {
+      const splits=d?.stats?.[0]?.splits; if(!splits?.length) return null;
+      const g=splits.find(x=>x.date===TODAY)||splits[splits.length-1];
+      s=g.stat; s._date=g.date;
+    } else { s=d?.stats?.[0]?.splits?.[0]?.stat; if(!s) return null; }
+    return { ip:s.inningsPitched||'0.0', w:+s.wins||0, sv:+s.saves||0, hr:+s.homeRuns||0, k:+s.strikeOuts||0, hld:+s.holds||0, era:s.era||'-', whip:s.whip||'-', qs:+s.qualityStarts||0, date:s._date };
+  } catch(e){ return null; }
+}
+
+function badge(p) {
+  const specialCls = p.pos==='IL' ? 'style="background:rgba(239,68,68,0.2);color:#f87171"' : p.pos==='NA' ? 'style="background:rgba(107,114,128,0.2);color:#9ca3af"' : p.pos==='BN' ? 'style="background:rgba(71,85,105,0.2);color:#94a3b8"' : '';
+  const teamCls = (p.pos==='IL'||p.pos==='NA'||p.pos==='BN') ? '' : `team-${p.team}`;
+  return `<span class="pos-badge ${teamCls}" ${specialCls}>${p.posLabel||p.pos}</span>`;
+}
+function dv(v) { return (v===null||v===undefined||v==='-'||v==='.---') ? `<span class="stat-dash">—</span>` : `<span class="stat">${v}</span>`; }
+function gv(v, rev) {
+  const n=parseFloat(v);
+  if(isNaN(n)||v==='-'||v==='.---') return `<span class="stat-dash">—</span>`;
+  if(n===0) return `<span class="stat-dash">0</span>`;
+  return `<span class="${rev?(n>4.5?'stat-bad':'stat-good'):'stat-good'}">${v}</span>`;
+}
+
+function sortTable(type, col) {
+  const st=sortState[type];
+  if(st.col===col) st.dir*=-1; else{st.col=col;st.dir=-1;}
+  if(type==='b') renderBatters(rawBatters); else renderPitchers(rawPitchers);
+}
+
+function getStat(p, col) {
+  const s = currentMode==='today' ? p.today : p.season;
+  return s?.[col] ?? p[col] ?? '';
+}
+
+function sortRows(rows, col, dir) {
+  if(!col) return rows;
+  return [...rows].sort((a,b)=>{
+    const av=getStat(a,col), bv=getStat(b,col);
+    const an=parseFloat(av),bn=parseFloat(bv);
+    if(!isNaN(an)&&!isNaN(bn)) return (an-bn)*dir;
+    return String(av).localeCompare(String(bv))*dir;
+  });
+}
+
+function renderBatters(data) {
+  rawBatters=data;
+  const isT=currentMode==='today';
+  const pre=isT?'今日':'本季';
+  document.getElementById('b-mode-lbl').textContent=isT?'今日數據':'2026 本季累計';
+  ['AB','H','R','HR','RBI','SB','BB','K','AVG','OPS'].forEach(k=>{
+    const el=document.getElementById(`l-${k}`); if(el) el.textContent=`${pre} ${k}`;
+  });
+
+  const sorted=sortRows(data,sortState.b.col,sortState.b.dir);
+  let totAB=0,totH=0,totR=0,totHR=0,totRBI=0,totSB=0,totBB=0,totK=0,totOBPn=0,totOBPd=0,totTB=0,has=false;
+
+  document.getElementById('batter-tbody').innerHTML=sorted.map((p,i)=>{
+    const s=isT?p.today:p.season;
+    const opp=scheduleCache[p.teamId]||'—';
+    if(s){
+      has=true;
+      totAB+=s.ab||0;totH+=s.h||0;totR+=s.r||0;totHR+=s.hr||0;
+      totRBI+=s.rbi||0;totSB+=s.sb||0;totBB+=s.bb||0;totK+=s.k||0;
+      if(s.obp&&s.pa){totOBPn+=s.obp*s.pa;totOBPd+=s.pa;}
+      if(s.slg&&s.ab) totTB+=s.slg*s.ab;
+    }
+    const dn=(isT&&s?.date&&s.date!==TODAY)?`<span style="font-size:10px;color:var(--muted);margin-left:4px">(${s.date})</span>`:'';
+    const row=[s?dv(s.ab):'<span class="stat-dash">—</span>',s?gv(s.h):'<span class="stat-dash">—</span>',s?gv(s.r):'<span class="stat-dash">—</span>',s?gv(s.hr):'<span class="stat-dash">—</span>',s?gv(s.rbi):'<span class="stat-dash">—</span>',s?gv(s.sb):'<span class="stat-dash">—</span>',s?dv(s.bb):'<span class="stat-dash">—</span>',s?dv(s.k):'<span class="stat-dash">—</span>',s?dv(s.avg):'<span class="stat-dash">—</span>',s?dv(s.ops):'<span class="stat-dash">—</span>'];
+    return `<tr class="${p.bench?'bench':''}" style="animation-delay:${i*20}ms"><td>${badge(p)}</td><td><div class="player-name">${p.name}${dn}</div><div class="player-team">${p.team}</div></td><td><span class="opp">${opp}</span></td>${row.map(c=>`<td>${c}</td>`).join('')}</tr>`;
+  }).join('');
+
+  if(has){
+    document.getElementById('s-AB').textContent=totAB;
+    document.getElementById('s-H').textContent=totH;
+    document.getElementById('s-R').textContent=totR;
+    document.getElementById('s-HR').textContent=totHR;
+    document.getElementById('s-RBI').textContent=totRBI;
+    document.getElementById('s-SB').textContent=totSB;
+    document.getElementById('s-BB').textContent=totBB;
+    document.getElementById('s-K').textContent=totK;
+    document.getElementById('s-AVG').textContent=totAB>0?(totH/totAB).toFixed(3).replace(/^0/,''):'—';
+    const obp=totOBPd>0?totOBPn/totOBPd:0, slg=totAB>0?totTB/totAB:0;
+    document.getElementById('s-OPS').textContent=totOBPd>0?(obp+slg).toFixed(3).replace(/^0/,''):'—';
+  }
+}
+
+function renderPitchers(data) {
+  rawPitchers=data;
+  const isT=currentMode==='today';
+  const pre=isT?'今日':'本季';
+  document.getElementById('p-mode-lbl').textContent=isT?'今日數據':'2026 本季累計';
+  ['IP','W','SV','PHR','PK','HLD','ERA','WHIP','QS'].forEach(k=>{
+    const el=document.getElementById(`l-${k}`);
+    if(el) el.textContent=`${pre} ${k==='PHR'?'HR':k==='PK'?'K':k}`;
+  });
+
+  const sorted=sortRows(data,sortState.p.col,sortState.p.dir);
+  let totIP=0,totW=0,totSV=0,totHR=0,totK=0,totHLD=0,totQS=0,eraER=0,eraIP=0,wT=0,wIP=0,has=false;
+
+  document.getElementById('pitcher-tbody').innerHTML=sorted.map((p,i)=>{
+    const s=isT?p.today:p.season;
+    const opp=scheduleCache[p.teamId]||'—';
+    if(s){
+      has=true;
+      const ip=parseFloat(s.ip)||0;
+      totIP+=ip;totW+=s.w||0;totSV+=s.sv||0;totHR+=s.hr||0;totK+=s.k||0;totHLD+=s.hld||0;totQS+=s.qs||0;
+      if(ip>0&&s.era!=='-'){eraER+=parseFloat(s.era)*ip/9;eraIP+=ip;}
+      if(ip>0&&s.whip!=='-'){wT+=parseFloat(s.whip)*ip;wIP+=ip;}
+    }
+    const dn=(isT&&s?.date&&s.date!==TODAY)?`<span style="font-size:10px;color:var(--muted);margin-left:4px">(${s.date})</span>`:'';
+    const row=[s?dv(s.ip):'<span class="stat-dash">—</span>',s?gv(s.w):'<span class="stat-dash">—</span>',s?gv(s.sv):'<span class="stat-dash">—</span>',s?dv(s.hr):'<span class="stat-dash">—</span>',s?gv(s.k):'<span class="stat-dash">—</span>',s?dv(s.hld):'<span class="stat-dash">—</span>',s?gv(s.era,true):'<span class="stat-dash">—</span>',s?gv(s.whip,true):'<span class="stat-dash">—</span>',s?gv(s.qs):'<span class="stat-dash">—</span>'];
+    return `<tr class="${p.bench?'bench':''}" style="animation-delay:${i*20}ms"><td>${badge(p)}</td><td><div class="player-name">${p.name}${dn}</div><div class="player-team">${p.team}</div></td><td><span class="opp">${opp}</span></td>${row.map(c=>`<td>${c}</td>`).join('')}</tr>`;
+  }).join('');
+
+  if(has){
+    document.getElementById('s-IP').textContent=totIP.toFixed(1);
+    document.getElementById('s-W').textContent=totW;
+    document.getElementById('s-SV').textContent=totSV;
+    document.getElementById('s-PHR').textContent=totHR;
+    document.getElementById('s-PK').textContent=totK;
+    document.getElementById('s-HLD').textContent=totHLD;
+    document.getElementById('s-ERA').textContent=eraIP>0?(eraER*9/eraIP).toFixed(2):'—';
+    document.getElementById('s-WHIP').textContent=wIP>0?(wT/wIP).toFixed(2):'—';
+    document.getElementById('s-QS').textContent=totQS;
+  }
+}
+
+function setMode(mode) {
+  currentMode=mode;
+  document.getElementById('mode-today').classList.toggle('active',mode==='today');
+  document.getElementById('mode-season').classList.toggle('active',mode==='season');
+  renderBatters(rawBatters);
+  renderPitchers(rawPitchers);
+}
+
+function switchTab(tab) {
+  document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active',(i===0&&tab==='batters')||(i===1&&tab==='pitchers')));
+  document.getElementById('panel-batters').classList.toggle('active',tab==='batters');
+  document.getElementById('panel-pitchers').classList.toggle('active',tab==='pitchers');
+}
+
+async function loadAll() {
+  const btn=document.getElementById('refresh-btn'),icon=document.getElementById('refresh-icon');
+  btn.disabled=true;icon.className='spin';icon.textContent='↻';
+  document.getElementById('batter-tbody').innerHTML=`<tr class="loading-row"><td colspan="13"><span class="spin">↻</span> 正在從 MLB Stats API 載入...</td></tr>`;
+  document.getElementById('pitcher-tbody').innerHTML=`<tr class="loading-row"><td colspan="12"><span class="spin">↻</span> 正在從 MLB Stats API 載入...</td></tr>`;
+  document.getElementById('batter-error').style.display='none';
+  document.getElementById('pitcher-error').style.display='none';
+
+  await fetchSchedule();
+
+  const [bRes,pRes]=await Promise.all([
+    Promise.all(BATTERS.map(async p=>{
+      const [today,season]=await Promise.all([apiBatter(p.mlbId,'gameLog'),apiBatter(p.mlbId,'season')]);
+      return{...p,today,season};
+    })),
+    Promise.all(PITCHERS.map(async p=>{
+      const [today,season]=await Promise.all([apiPitcher(p.mlbId,'gameLog'),apiPitcher(p.mlbId,'season')]);
+      return{...p,today,season};
+    }))
+  ]);
+
+  renderBatters(bRes);
+  renderPitchers(pRes);
+
+  if(bRes.every(p=>!p.today&&!p.season)){
+    document.getElementById('batter-error').style.display='block';
+    document.getElementById('batter-error').textContent='⚠ 無法取得打者數據，請確認網路連線或稍後再試。';
+  }
+  if(pRes.every(p=>!p.today&&!p.season)){
+    document.getElementById('pitcher-error').style.display='block';
+    document.getElementById('pitcher-error').textContent='⚠ 無法取得投手數據，請確認網路連線或稍後再試。';
+  }
+
+  document.getElementById('last-updated').textContent=`上次更新：${new Date().toLocaleTimeString('zh-TW')}`;
+  btn.disabled=false;icon.className='';icon.textContent='↻';
+}
+
+loadAll();
+</script>
+</body>
+</html>
