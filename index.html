@@ -203,12 +203,12 @@ const BATTERS = [
   { pos:'BN',   name:'Lawrence Butler',   team:'ATH', teamId:133, mlbId:671732, bench:true, posLabel:'OF' },
 ];
 const PITCHERS = [
-  { pos:'SP', name:'Jesús Luzardo',     team:'PHI', teamId:143, mlbId:666142, bench:false },
+  { pos:'SP', name:'Jesús Luzardo',     team:'PHI', teamId:143, mlbId:666200, bench:false },
   { pos:'SP', name:'Trey Gibson',       team:'BAL', teamId:110, mlbId:694346, bench:false },
-  { pos:'SP', name:'Emerson Hancock',   team:'SEA', teamId:136, mlbId:687261, bench:false },
-  { pos:'SP', name:'Kyle Bradish',      team:'BAL', teamId:110, mlbId:669062, bench:false },
+  { pos:'SP', name:'Emerson Hancock',   team:'SEA', teamId:136, mlbId:676106, bench:false },
+  { pos:'SP', name:'Kyle Bradish',      team:'BAL', teamId:110, mlbId:680694, bench:false },
   { pos:'SP', name:'Jack Flaherty',     team:'DET', teamId:116, mlbId:656427, bench:false },
-  { pos:'SP', name:'Bubba Chandler',    team:'PIT', teamId:134, mlbId:694297, bench:false },
+  { pos:'SP', name:'Bubba Chandler',    team:'PIT', teamId:134, mlbId:696149, bench:false },
   { pos:'SP', name:'Shohei Ohtani',     team:'LAD', teamId:119, mlbId:660271, bench:false },
   { pos:'RP', name:'Trevor Megill',     team:'MIL', teamId:158, mlbId:656730, bench:false },
   { pos:'RP', name:'Tyler Kinley',      team:'ATL', teamId:144, mlbId:641755, bench:false },
@@ -254,7 +254,8 @@ async function apiBatter(mlbId, statsType) {
     let s;
     if (statsType==='gameLog') {
       const splits=d?.stats?.[0]?.splits; if(!splits?.length) return null;
-      const g=splits.find(x=>x.date===TODAY)||splits[splits.length-1];
+      const g=splits.find(x=>x.date===TODAY);
+      if (!g) return null; // 今天沒出賽，不顯示數據
       s=g.stat; s._date=g.date;
     } else { s=d?.stats?.[0]?.splits?.[0]?.stat; if(!s) return null; }
     return {
@@ -274,7 +275,8 @@ async function apiPitcher(mlbId, statsType) {
     let s;
     if (statsType==='gameLog') {
       const splits=d?.stats?.[0]?.splits; if(!splits?.length) return null;
-      const g=splits.find(x=>x.date===TODAY)||splits[splits.length-1];
+      const g=splits.find(x=>x.date===TODAY);
+      if (!g) return null; // 今天沒出賽，不顯示數據
       s=g.stat; s._date=g.date;
     } else { s=d?.stats?.[0]?.splits?.[0]?.stat; if(!s) return null; }
     return { ip:s.inningsPitched||'0.0', w:+s.wins||0, sv:+s.saves||0, hr:+s.homeRuns||0, k:+s.strikeOuts||0, hld:+s.holds||0, era:s.era||'-', whip:s.whip||'-', qs:+s.qualityStarts||0, date:s._date };
