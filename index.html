@@ -15,8 +15,8 @@
   body { background:var(--bg); color:var(--text); font-family:'DM Sans',sans-serif; min-height:100vh; }
 
   header { padding:28px 32px 0; display:flex; align-items:flex-end; justify-content:space-between; gap:16px; flex-wrap:wrap; }
-  .logo { font-family:'Bebas Neue',sans-serif; font-size:42px; letter-spacing:2px; line-height:1; }
-  .logo span { color:var(--accent2); }
+  .logo { font-family:'DM Sans',sans-serif; font-size:32px; font-weight:600; letter-spacing:1px; line-height:1.1; color:var(--text); }
+  .logo span { color:var(--accent2); font-weight:700; }
   .subtitle { font-size:13px; color:var(--muted); letter-spacing:2px; margin-top:5px; font-family:'DM Sans',sans-serif; font-weight:500; }
   .header-right { display:flex; align-items:center; gap:12px; }
   .last-updated { font-size:11px; color:var(--muted); }
@@ -102,7 +102,7 @@
 
 <header>
   <div>
-    <div class="logo">FANTASY <span>BASEBALL</span></div>
+    <div class="logo">2026 <span>Sport Card</span> Super Manager</div>
     <div class="subtitle">MiLB TEAM · 2026 Season</div>
   </div>
   <div class="header-right">
@@ -130,8 +130,8 @@
     <div class="mode-label" id="b-mode-lbl">今日數據</div>
     <div class="summary-bar">
       <div class="stat-card"><div class="stat-card-label" id="l-AB">今日 AB</div><div class="stat-card-value" id="s-AB">—</div></div>
-      <div class="stat-card"><div class="stat-card-label" id="l-H">今日 H</div><div class="stat-card-value" id="s-H">—</div></div>
       <div class="stat-card"><div class="stat-card-label" id="l-R">今日 R</div><div class="stat-card-value" id="s-R">—</div></div>
+      <div class="stat-card"><div class="stat-card-label" id="l-H">今日 H</div><div class="stat-card-value" id="s-H">—</div></div>
       <div class="stat-card"><div class="stat-card-label" id="l-HR">今日 HR</div><div class="stat-card-value" id="s-HR">—</div></div>
       <div class="stat-card"><div class="stat-card-label" id="l-RBI">今日 RBI</div><div class="stat-card-value" id="s-RBI">—</div></div>
       <div class="stat-card"><div class="stat-card-label" id="l-SB">今日 SB</div><div class="stat-card-value" id="s-SB">—</div></div>
@@ -144,8 +144,8 @@
       <table>
         <thead><tr>
           <th>POS</th><th onclick="sortTable('b','name')">球員</th><th>對手</th>
-          <th onclick="sortTable('b','ab')">AB</th><th onclick="sortTable('b','h')">H</th>
-          <th onclick="sortTable('b','r')">R</th><th onclick="sortTable('b','hr')">HR</th>
+          <th onclick="sortTable('b','ab')">AB</th><th onclick="sortTable('b','r')">R</th>
+          <th onclick="sortTable('b','h')">H</th><th onclick="sortTable('b','hr')">HR</th>
           <th onclick="sortTable('b','rbi')">RBI</th><th onclick="sortTable('b','sb')">SB</th>
           <th onclick="sortTable('b','bb')">BB</th><th onclick="sortTable('b','k')">K</th>
           <th onclick="sortTable('b','avg')">AVG</th><th onclick="sortTable('b','ops')">OPS</th>
@@ -162,23 +162,23 @@
     <div class="summary-bar">
       <div class="stat-card"><div class="stat-card-label" id="l-IP">今日 IP</div><div class="stat-card-value" id="s-IP">—</div></div>
       <div class="stat-card"><div class="stat-card-label" id="l-W">今日 W</div><div class="stat-card-value" id="s-W">—</div></div>
-      <div class="stat-card"><div class="stat-card-label" id="l-SV">今日 SV</div><div class="stat-card-value" id="s-SV">—</div></div>
-      <div class="stat-card"><div class="stat-card-label" id="l-PHR">今日 HR</div><div class="stat-card-value" id="s-PHR">—</div></div>
-      <div class="stat-card"><div class="stat-card-label" id="l-PK">今日 K</div><div class="stat-card-value" id="s-PK">—</div></div>
       <div class="stat-card"><div class="stat-card-label" id="l-HLD">今日 HLD</div><div class="stat-card-value" id="s-HLD">—</div></div>
+      <div class="stat-card"><div class="stat-card-label" id="l-SV">今日 SV</div><div class="stat-card-value" id="s-SV">—</div></div>
+      <div class="stat-card"><div class="stat-card-label" id="l-PK">今日 K</div><div class="stat-card-value" id="s-PK">—</div></div>
+      <div class="stat-card"><div class="stat-card-label" id="l-PHR">今日 HR</div><div class="stat-card-value" id="s-PHR">—</div></div>
+      <div class="stat-card"><div class="stat-card-label" id="l-QS">今日 QS</div><div class="stat-card-value" id="s-QS">—</div></div>
       <div class="stat-card"><div class="stat-card-label" id="l-ERA">今日 ERA</div><div class="stat-card-value" id="s-ERA" style="font-size:18px">—</div></div>
       <div class="stat-card"><div class="stat-card-label" id="l-WHIP">今日 WHIP</div><div class="stat-card-value" id="s-WHIP" style="font-size:18px">—</div></div>
-      <div class="stat-card"><div class="stat-card-label" id="l-QS">今日 QS</div><div class="stat-card-value" id="s-QS">—</div></div>
     </div>
     <div class="table-wrap">
       <table>
         <thead><tr>
           <th>POS</th><th onclick="sortTable('p','name')">球員</th><th>對手</th>
           <th onclick="sortTable('p','ip')">IP</th><th onclick="sortTable('p','w')">W</th>
-          <th onclick="sortTable('p','sv')">SV</th><th onclick="sortTable('p','hr')">HR</th>
-          <th onclick="sortTable('p','k')">K</th><th onclick="sortTable('p','hld')">HLD</th>
-          <th onclick="sortTable('p','era')">ERA</th><th onclick="sortTable('p','whip')">WHIP</th>
-          <th onclick="sortTable('p','qs')">QS</th>
+          <th onclick="sortTable('p','hld')">HLD</th><th onclick="sortTable('p','sv')">SV</th>
+          <th onclick="sortTable('p','k')">K</th><th onclick="sortTable('p','hr')">HR</th>
+          <th onclick="sortTable('p','qs')">QS</th><th onclick="sortTable('p','era')">ERA</th>
+          <th onclick="sortTable('p','whip')">WHIP</th>
         </tr></thead>
         <tbody id="pitcher-tbody"><tr class="loading-row"><td colspan="12"><span class="spin">↻</span> 正在載入...</td></tr></tbody>
       </table>
@@ -223,7 +223,8 @@ const PITCHERS = [
 ];
 
 const SEASON = 2026;
-const TODAY = new Date().toISOString().split('T')[0];
+// 用美國東部時間（ET）作為「今天」的基準
+const TODAY = new Date(new Date().toLocaleString('en-US', {timeZone:'America/New_York'})).toISOString().split('T')[0];
 const PROXY = 'https://corsproxy.io/?url=';
 let currentMode = 'today';
 let rawBatters = [], rawPitchers = [];
@@ -340,7 +341,7 @@ function renderBatters(data) {
       if(s.slg&&s.ab) totTB+=s.slg*s.ab;
     }
     const dn=(isT&&s?.date&&s.date!==TODAY)?`<span style="font-size:10px;color:var(--muted);margin-left:4px">(${s.date})</span>`:'';
-    const row=[s?dv(s.ab):'<span class="stat-dash">—</span>',s?gv(s.h):'<span class="stat-dash">—</span>',s?gv(s.r):'<span class="stat-dash">—</span>',s?gv(s.hr):'<span class="stat-dash">—</span>',s?gv(s.rbi):'<span class="stat-dash">—</span>',s?gv(s.sb):'<span class="stat-dash">—</span>',s?dv(s.bb):'<span class="stat-dash">—</span>',s?dv(s.k):'<span class="stat-dash">—</span>',s?dv(s.avg):'<span class="stat-dash">—</span>',s?dv(s.ops):'<span class="stat-dash">—</span>'];
+    const row=[s?dv(s.ab):'<span class="stat-dash">—</span>',s?gv(s.r):'<span class="stat-dash">—</span>',s?gv(s.h):'<span class="stat-dash">—</span>',s?gv(s.hr):'<span class="stat-dash">—</span>',s?gv(s.rbi):'<span class="stat-dash">—</span>',s?gv(s.sb):'<span class="stat-dash">—</span>',s?dv(s.bb):'<span class="stat-dash">—</span>',s?dv(s.k):'<span class="stat-dash">—</span>',s?dv(s.avg):'<span class="stat-dash">—</span>',s?dv(s.ops):'<span class="stat-dash">—</span>'];
     return `<tr class="${p.bench?'bench':''}" style="animation-delay:${i*20}ms"><td>${badge(p)}</td><td><div class="player-name">${p.name}${dn}</div><div class="player-team">${p.team}</div></td><td><span class="opp">${opp}</span></td>${row.map(c=>`<td>${c}</td>`).join('')}</tr>`;
   }).join('');
 
@@ -383,7 +384,7 @@ function renderPitchers(data) {
       if(ip>0&&s.whip!=='-'){wT+=parseFloat(s.whip)*ip;wIP+=ip;}
     }
     const dn=(isT&&s?.date&&s.date!==TODAY)?`<span style="font-size:10px;color:var(--muted);margin-left:4px">(${s.date})</span>`:'';
-    const row=[s?dv(s.ip):'<span class="stat-dash">—</span>',s?gv(s.w):'<span class="stat-dash">—</span>',s?gv(s.sv):'<span class="stat-dash">—</span>',s?dv(s.hr):'<span class="stat-dash">—</span>',s?gv(s.k):'<span class="stat-dash">—</span>',s?dv(s.hld):'<span class="stat-dash">—</span>',s?gv(s.era,true):'<span class="stat-dash">—</span>',s?gv(s.whip,true):'<span class="stat-dash">—</span>',s?gv(s.qs):'<span class="stat-dash">—</span>'];
+    const row=[s?dv(s.ip):'<span class="stat-dash">—</span>',s?gv(s.w):'<span class="stat-dash">—</span>',s?dv(s.hld):'<span class="stat-dash">—</span>',s?gv(s.sv):'<span class="stat-dash">—</span>',s?gv(s.k):'<span class="stat-dash">—</span>',s?dv(s.hr):'<span class="stat-dash">—</span>',s?gv(s.qs):'<span class="stat-dash">—</span>',s?gv(s.era,true):'<span class="stat-dash">—</span>',s?gv(s.whip,true):'<span class="stat-dash">—</span>'];
     return `<tr class="${p.bench?'bench':''}" style="animation-delay:${i*20}ms"><td>${badge(p)}</td><td><div class="player-name">${p.name}${dn}</div><div class="player-team">${p.team}</div></td><td><span class="opp">${opp}</span></td>${row.map(c=>`<td>${c}</td>`).join('')}</tr>`;
   }).join('');
 
