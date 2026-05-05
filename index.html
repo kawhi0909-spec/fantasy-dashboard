@@ -116,8 +116,12 @@
 
 <div class="tabs-row">
   <div class="tabs">
-    <div class="tab active" onclick="switchTab('batters')">⚾ 打者</div>
-    <div class="tab" onclick="switchTab('pitchers')">💪 投手</div>
+    <div class="tab active" onclick="switchTab('batters')"><svg width="16" height="16" viewBox="0 0 24 24" style="vertical-align:middle;margin-right:4px"><path d="M3 21 L18 6 C19.5 4.5 21.5 4.5 22 6 C22.5 7.5 21 9 19.5 10.5 L7 21 Z" fill="currentColor" opacity="0.9"/><circle cx="4" cy="20" r="2" fill="currentColor" opacity="0.5"/></svg>打者</div>
+    <div class="tab" onclick="switchTab('pitchers')"><svg width="16" height="16" viewBox="0 0 24 24" style="vertical-align:middle;margin-right:4px"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M7 8 Q12 6 17 8" fill="none" stroke="currentColor" stroke-width="1.2"/><path d="M7 16 Q12 18 17 16" fill="none" stroke="currentColor" stroke-width="1.2"/></svg>投手</div>
+    <div class="tab" onclick="switchTab('batter-fa')"><svg width="16" height="16" viewBox="0 0 24 24" style="vertical-align:middle;margin-right:4px"><path d="M3 21 L18 6 C19.5 4.5 21.5 4.5 22 6 C22.5 7.5 21 9 19.5 10.5 L7 21 Z" fill="currentColor" opacity="0.9"/><circle cx="4" cy="20" r="2" fill="currentColor" opacity="0.5"/></svg>打者 FA</div>
+    <div class="tab" onclick="switchTab('pitcher-fa')"><svg width="16" height="16" viewBox="0 0 24 24" style="vertical-align:middle;margin-right:4px"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M7 8 Q12 6 17 8" fill="none" stroke="currentColor" stroke-width="1.2"/><path d="M7 16 Q12 18 17 16" fill="none" stroke="currentColor" stroke-width="1.2"/></svg>投手 FA</div>
+    <div class="tab" onclick="switchTab('batter-il')"><svg width="16" height="16" viewBox="0 0 24 24" style="vertical-align:middle;margin-right:4px"><rect x="3" y="3" width="18" height="18" rx="3" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M12 7 L12 17 M7 12 L17 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>打者 IL/NA</div>
+    <div class="tab" onclick="switchTab('pitcher-il')"><svg width="16" height="16" viewBox="0 0 24 24" style="vertical-align:middle;margin-right:4px"><rect x="3" y="3" width="18" height="18" rx="3" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M12 7 L12 17 M7 12 L17 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>投手 IL/NA</div>
   </div>
   <div class="mode-toggle">
     <div class="mode-btn active" id="mode-today" onclick="setMode('today')">今日</div>
@@ -186,6 +190,71 @@
     </div>
     <div id="pitcher-error" class="error-msg" style="display:none"></div>
   </div>
+
+  <!-- BATTER FA -->
+  <div class="panel" id="panel-batter-fa">
+    <div class="table-wrap">
+      <table>
+        <thead id="batter-fa-thead"><tr>
+          <th>POS</th><th>球員</th><th>對手</th>
+          <th>AB</th><th>R</th><th>H</th><th>HR</th>
+          <th>RBI</th><th>SB</th><th>BB</th><th>K</th>
+          <th>AVG</th><th>OPS</th>
+        </tr></thead>
+        <tbody id="batter-fa-tbody">
+          <tr class="loading-row"><td colspan="13">尚未加入球員</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- PITCHER FA -->
+  <div class="panel" id="panel-pitcher-fa">
+    <div class="table-wrap">
+      <table>
+        <thead id="pitcher-fa-thead"><tr>
+          <th>POS</th><th>球員</th><th>對手</th>
+          <th>IP</th><th>W</th><th>HLD</th><th>SV</th>
+          <th>K</th><th>HR</th><th>QS</th><th>ERA</th><th>WHIP</th>
+        </tr></thead>
+        <tbody id="pitcher-fa-tbody">
+          <tr class="loading-row"><td colspan="12">尚未加入球員</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <!-- BATTER FA/IL -->
+  <div class="panel" id="panel-batter-il">
+    <div class="table-wrap">
+      <table>
+        <thead><tr>
+          <th>POS</th><th>球員</th><th>對手</th>
+          <th>AB</th><th>R</th><th>H</th><th>HR</th>
+          <th>RBI</th><th>SB</th><th>BB</th><th>K</th>
+          <th>AVG</th><th>OPS</th>
+        </tr></thead>
+        <tbody id="batter-il-tbody">
+          <tr class="loading-row"><td colspan="13">尚未加入球員</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- PITCHER FA/IL -->
+  <div class="panel" id="panel-pitcher-il">
+    <div class="table-wrap">
+      <table>
+        <thead><tr>
+          <th>POS</th><th>球員</th><th>對手</th>
+          <th>IP</th><th>W</th><th>HLD</th><th>SV</th>
+          <th>K</th><th>HR</th><th>QS</th><th>ERA</th><th>WHIP</th>
+        </tr></thead>
+        <tbody id="pitcher-il-tbody">
+          <tr class="loading-row"><td colspan="12">尚未加入球員</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
 </main>
 
 <script>
@@ -228,8 +297,8 @@ const SEASON = 2026;
 const TODAY = new Date(new Date().toLocaleString('en-US', {timeZone:'America/New_York'})).toISOString().split('T')[0];
 const PROXY = 'https://corsproxy.io/?url=';
 let currentMode = 'today';
-let rawBatters = [], rawPitchers = [];
-let sortState = { b:{col:null,dir:1}, p:{col:null,dir:1} };
+let rawBatters = [], rawPitchers = [], rawBatterFA = [], rawPitcherFA = [];
+let sortState = { b:{col:null,dir:1}, p:{col:null,dir:1}, bfa:{col:null,dir:1}, pfa:{col:null,dir:1}, bil:{col:null,dir:1}, pil:{col:null,dir:1} };
 let scheduleCache = {};
 
 async function mlbFetch(url) {
@@ -301,7 +370,12 @@ function gv(v, rev) {
 function sortTable(type, col) {
   const st=sortState[type];
   if(st.col===col) st.dir*=-1; else{st.col=col;st.dir=-1;}
-  if(type==='b') renderBatters(rawBatters); else renderPitchers(rawPitchers);
+  if(type==='b') renderBatters(rawBatters);
+  else if(type==='p') renderPitchers(rawPitchers);
+  else if(type==='bfa') renderBatterFA(rawBatterFA);
+  else if(type==='pfa') renderPitcherFA(rawPitcherFA);
+  else if(type==='bil') renderBatterIL(rawBatterIL);
+  else if(type==='pil') renderPitcherIL(rawPitcherIL);
 }
 
 function getStat(p, col) {
@@ -408,12 +482,219 @@ function setMode(mode) {
   document.getElementById('mode-season').classList.toggle('active',mode==='season');
   renderBatters(rawBatters);
   renderPitchers(rawPitchers);
+  renderBatterFA(rawBatterFA);
+  renderPitcherFA(rawPitcherFA);
+  renderBatterIL(rawBatterIL);
+  renderPitcherIL(rawPitcherIL);
 }
 
 function switchTab(tab) {
-  document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active',(i===0&&tab==='batters')||(i===1&&tab==='pitchers')));
-  document.getElementById('panel-batters').classList.toggle('active',tab==='batters');
-  document.getElementById('panel-pitchers').classList.toggle('active',tab==='pitchers');
+  const tabs = ['batters','pitchers','batter-fa','pitcher-fa','batter-il','pitcher-il'];
+  document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active', tabs[i]===tab));
+  tabs.forEach(id=>{
+    document.getElementById(`panel-${id}`).classList.toggle('active', id===tab);
+  });
+}
+
+// ── FA Rosters（之後填入）──────────────────────────────────────────────────
+const BATTER_FA = [
+  { pos:'OF',   name:'Tyrone Taylor',       team:'COL', teamId:115, mlbId:621468 },
+  { pos:'2B/SS',name:'Tim Anderson',        team:'LAA', teamId:108, mlbId:621493 },
+  { pos:'OF',   name:'Hunter Renfroe',      team:'KC',  teamId:118, mlbId:600869 },
+  { pos:'C',    name:'Alex Jackson',        team:'MIN', teamId:142, mlbId:623698 },
+  { pos:'OF',   name:'Mark Canha',          team:'TEX', teamId:140, mlbId:606466 },
+  { pos:'OF',   name:'Michael Conforto',    team:'CHC', teamId:112, mlbId:624424 },
+  { pos:'2B/3B',name:'Vaughn Grissom',      team:'LAA', teamId:108, mlbId:687093 },
+  { pos:'OF',   name:'Masataka Yoshida',    team:'BOS', teamId:111, mlbId:807799 },
+  { pos:'C',    name:'Adrian Del Castillo', team:'AZ',  teamId:109, mlbId:672724 },
+  { pos:'C',    name:'Miguel Amaya',        team:'CHC', teamId:112, mlbId:672189 },
+  { pos:'C',    name:'Christian Vázquez',   team:'HOU', teamId:117, mlbId:525763 },
+  { pos:'OF',   name:'Andrew Benintendi',   team:'CWS', teamId:145, mlbId:657108 },
+  { pos:'OF',   name:'Wenceel Pérez',       team:'DET', teamId:116, mlbId:672659 },
+  { pos:'2B/OF',name:'Tyler Freeman',       team:'COL', teamId:115, mlbId:676595 },
+  { pos:'1B',   name:'Rhys Hoskins',        team:'CLE', teamId:114, mlbId:656555 },
+  { pos:'C',    name:'Luis Campusano',      team:'SD',  teamId:135, mlbId:674833 },
+  { pos:'2B/3B/SS',name:'Edmundo Sosa',     team:'PHI', teamId:143, mlbId:642758 },
+  { pos:'1B/2B',name:'Kody Clemens',        team:'MIN', teamId:142, mlbId:670042 },
+  { pos:'C',    name:'Bo Naylor',           team:'CLE', teamId:114, mlbId:672284 },
+  { pos:'OF',   name:'Alek Thomas',         team:'AZ',  teamId:109, mlbId:677950 },
+  { pos:'2B/3B/SS',name:'Miguel Rojas',     team:'LAD', teamId:119, mlbId:500743 },
+  { pos:'1B',   name:'Ty France',           team:'SD',  teamId:135, mlbId:664034 },
+  { pos:'2B/3B/OF',name:'Luis Rengifo',     team:'MIL', teamId:158, mlbId:666185 },
+  { pos:'C',    name:'Danny Jansen',        team:'TEX', teamId:140, mlbId:642070 },
+  { pos:'2B/SS/OF',name:'Jorge Mateo',      team:'ATL', teamId:144, mlbId:624505 },
+  { pos:'1B',   name:'Patrick Bailey',      team:'SF',  teamId:137, mlbId:672275 },
+  { pos:'1B/2B/3B/SS/OF',name:'Ezequiel Duran',team:'TEX',teamId:140, mlbId:678882 },
+  { pos:'1B/2B/SS',name:'Jake Cronenworth', team:'SD',  teamId:135, mlbId:664761 },
+  { pos:'C',    name:'Gabriel Moreno',      team:'AZ',  teamId:109, mlbId:665487 },
+  { pos:'2B/3B/SS',name:'Marcell Ozuna',    team:'PIT', teamId:134, mlbId:542303 },
+  { pos:'1B',   name:'Dominic Smith',       team:'ATL', teamId:144, mlbId:643529 },
+  { pos:'1B',   name:'Rhys Hoskins',        team:'CLE', teamId:114, mlbId:656555 },
+  { pos:'OF',   name:'Cedric Mullins',      team:'TB',  teamId:139, mlbId:656775 },
+  { pos:'C',    name:'Gary Sánchez',        team:'MIL', teamId:158, mlbId:596115 },
+  { pos:'C',    name:'Tyler Stephenson',    team:'CIN', teamId:113, mlbId:663886 },
+  { pos:'OF',   name:'Matt Wallner',        team:'MIN', teamId:142, mlbId:688769 },
+  { pos:'OF',   name:'Lourdes Gurriel Jr.', team:'AZ',  teamId:109, mlbId:666197 },
+  { pos:'3B',   name:'Ryan McMahon',        team:'NYY', teamId:147, mlbId:641543 },
+  { pos:'1B/2B',name:'Lenyn Sosa',          team:'TOR', teamId:141, mlbId:685922 },
+  { pos:'1B',   name:'Paul Goldschmidt',    team:'NYY', teamId:147, mlbId:502671 },
+  { pos:'OF',   name:'Mike Yastrzemski',    team:'ATL', teamId:144, mlbId:602074 },
+  { pos:'OF',   name:'Nick Castellanos',    team:'SD',  teamId:135, mlbId:592206 },
+  { pos:'C',    name:'JJ Bleday',           team:'CIN', teamId:113, mlbId:680978 },
+  { pos:'OF',   name:'Jonny DeLuca',        team:'TB',  teamId:139, mlbId:673962 },
+  { pos:'2B/3B',name:'Jared Triolo',        team:'PIT', teamId:134, mlbId:673741 },
+  { pos:'OF',   name:'Rob Refsnyder',       team:'SEA', teamId:136, mlbId:592669 },
+  { pos:'OF',   name:'Andrew McCutchen',    team:'TEX', teamId:140, mlbId:457705 },
+  { pos:'1B/2B/3B/SS/OF',name:'Josh Smith', team:'TEX', teamId:140, mlbId:680757 },
+  { pos:'1B',   name:'Paul Goldschmidt',    team:'NYY', teamId:147, mlbId:502671 },
+  { pos:'C',    name:'Nick Fortes',         team:'TB',  teamId:139, mlbId:669003 },
+  { pos:'OF',   name:'Manuel Margot',       team:'DET', teamId:116, mlbId:622534 },
+  { pos:'2B/3B/SS',name:'Isiah Kiner-Falefa',team:'BOS',teamId:111, mlbId:672386 },
+  { pos:'OF',   name:'Tyler O\'Neill',      team:'BAL', teamId:110, mlbId:641933 },
+  { pos:'2B/SS/OF',name:'Luisangel Acuña',  team:'CWS', teamId:145, mlbId:694192 },
+  { pos:'1B/2B/3B/SS',name:'Luis García Jr.',team:'WSH',teamId:120, mlbId:671277 },
+  { pos:'OF',   name:'Adolis García',       team:'PHI', teamId:143, mlbId:666969 },
+  { pos:'1B/OF',name:'Luke Raley',          team:'SEA', teamId:136, mlbId:664728 },
+  { pos:'1B/2B/3B/SS',name:'Oswald Peraza', team:'LAA', teamId:108, mlbId:676612 },
+  { pos:'1B/OF',name:'Derek Hill',          team:'CWS', teamId:145, mlbId:641531 },
+  { pos:'2B/3B/SS',name:'Caleb Durbin',     team:'BOS', teamId:111, mlbId:694237 },
+  { pos:'OF',   name:'Ke\'Bryan Hayes',     team:'CIN', teamId:113, mlbId:663647 },
+  { pos:'OF',   name:'Jordan Beck',         team:'COL', teamId:115, mlbId:695042 },
+  { pos:'OF',   name:'Owen Caissie',        team:'MIA', teamId:146, mlbId:694109 },
+  { pos:'2B/3B',name:'Marcelo Mayer',       team:'BOS', teamId:111, mlbId:694148 },
+  { pos:'OF',   name:'Joey Wiemer',         team:'WSH', teamId:120, mlbId:688843 },
+  { pos:'1B/2B',name:'Edouard Julien',      team:'COL', teamId:115, mlbId:694455 },
+  { pos:'3B',   name:'Coby Mayo',           team:'BAL', teamId:110, mlbId:694653 },
+  { pos:'1B/3B',name:'Connor Norby',        team:'MIA', teamId:146, mlbId:694165 },
+  { pos:'C',    name:'Elias Díaz',          team:'KC',  teamId:118, mlbId:553869 },
+  { pos:'OF',   name:'Colton Cowser',       team:'BAL', teamId:110, mlbId:694497 },
+];
+
+const PITCHER_FA = [
+  // 投手FA名單之後填入
+];
+
+const BATTER_IL = [
+  { pos:'IL',  name:'Brooks Baldwin',      team:'CWS', teamId:145, mlbId:681460, posLabel:'2B/3B/SS/OF' },
+  { pos:'IL',  name:'Harrison Bader',      team:'SF',  teamId:137, mlbId:664056, posLabel:'OF' },
+  { pos:'IL',  name:'Joey Loperfido',      team:'HOU', teamId:117, mlbId:694388, posLabel:'OF' },
+  { pos:'IL',  name:'Daniel Susac',        team:'SF',  teamId:137, mlbId:691740, posLabel:'C' },
+  { pos:'IL',  name:'Romy Gonzalez',       team:'BOS', teamId:111, mlbId:663853, posLabel:'1B/2B' },
+  { pos:'IL',  name:'Lars Nootbaar',       team:'STL', teamId:138, mlbId:663457, posLabel:'OF' },
+  { pos:'IL',  name:'Ha-Seong Kim',        team:'ATL', teamId:144, mlbId:673490, posLabel:'2B/SS' },
+  { pos:'IL',  name:'Austin Hays',         team:'CWS', teamId:145, mlbId:669720, posLabel:'OF' },
+  { pos:'IL',  name:'Nathan Lukes',        team:'TOR', teamId:141, mlbId:664770, posLabel:'OF' },
+  { pos:'IL',  name:'Victor Robles',       team:'SEA', teamId:136, mlbId:645302, posLabel:'OF' },
+  { pos:'IL',  name:'Gavin Lux',           team:'TB',  teamId:139, mlbId:666158, posLabel:'2B/3B/OF' },
+  { pos:'IL',  name:'Triston Casas',       team:'BOS', teamId:111, mlbId:671213, posLabel:'1B' },
+  { pos:'IL',  name:'Enrique Hernández',   team:'LAD', teamId:119, mlbId:571771, posLabel:'1B/2B/3B/OF' },
+  { pos:'IL',  name:'Jonathan India',      team:'KC',  teamId:118, mlbId:663697, posLabel:'2B/3B/OF' },
+  { pos:'IL',  name:'Ronny Mauricio',      team:'NYM', teamId:121, mlbId:677595, posLabel:'2B/SS' },
+  { pos:'IL',  name:'Anthony Santander',   team:'TOR', teamId:141, mlbId:623993, posLabel:'OF' },
+  { pos:'IL',  name:'Jake Meyers',         team:'HOU', teamId:117, mlbId:676694, posLabel:'OF' },
+  { pos:'IL',  name:'Max Muncy',           team:'ATH', teamId:133, mlbId:571970, posLabel:'2B/3B/SS' },
+  { pos:'NA',  name:'Christian Moore',     team:'LAA', teamId:108, mlbId:695681, posLabel:'2B' },
+  { pos:'IL',  name:'Zach McKinstry',      team:'DET', teamId:116, mlbId:656716, posLabel:'2B/3B/SS/OF' },
+  { pos:'IL',  name:'Everson Pereira',     team:'CWS', teamId:145, mlbId:677592, posLabel:'OF' },
+];
+
+const PITCHER_IL = [
+  // 範例格式：{ pos:'IL', name:'球員名', team:'NYY', teamId:147, mlbId:123456 }
+];
+
+let rawBatterIL = [], rawPitcherIL = [];
+
+function renderBatterIL(data) {
+  rawBatterIL = data;
+  const isT = currentMode==='today';
+  const tbody = document.getElementById('batter-il-tbody');
+  if (!data.length) { tbody.innerHTML=`<tr class="loading-row"><td colspan="13" style="color:var(--muted)">尚未加入球員</td></tr>`; return; }
+  const sorted = sortRows(data, sortState.bil.col, sortState.bil.dir);
+  const thSort = (col,label) => { const st=sortState.bil; const arrow=st.col===col?(st.dir>0?'↑':'↓'):''; return `<th onclick="sortTable('bil','${col}')" style="cursor:pointer">${label}${arrow?` <span style="color:var(--accent)">${arrow}</span>`:''}`;};
+  document.getElementById('batter-il-thead').innerHTML=`<tr><th>POS</th><th onclick="sortTable('bil','name')" style="cursor:pointer">球員</th><th>對手</th>${thSort('ab','AB')}</th>${thSort('r','R')}</th>${thSort('h','H')}</th>${thSort('hr','HR')}</th>${thSort('rbi','RBI')}</th>${thSort('sb','SB')}</th>${thSort('bb','BB')}</th>${thSort('k','K')}</th>${thSort('avg','AVG')}</th>${thSort('ops','OPS')}</th></tr>`;
+  tbody.innerHTML = sorted.map((p,i)=>{
+    const s=isT?p.today:p.season;
+    const opp=scheduleCache[p.teamId]||'—';
+    const row=[s?dv(s.ab):'<span class="stat-dash">—</span>',s?gv(s.r):'<span class="stat-dash">—</span>',s?gv(s.h):'<span class="stat-dash">—</span>',s?gv(s.hr):'<span class="stat-dash">—</span>',s?gv(s.rbi):'<span class="stat-dash">—</span>',s?gv(s.sb):'<span class="stat-dash">—</span>',s?dv(s.bb):'<span class="stat-dash">—</span>',s?dv(s.k):'<span class="stat-dash">—</span>',s?dv(s.avg):'<span class="stat-dash">—</span>',s?dv(s.ops):'<span class="stat-dash">—</span>'];
+    return `<tr style="animation-delay:${i*20}ms"><td>${badge(p)}</td><td><div class="player-name">${p.name}</div><div class="player-team">${p.team}</div></td><td><span class="opp">${opp}</span></td>${row.map(c=>`<td>${c}</td>`).join('')}</tr>`;
+  }).join('');
+}
+
+function renderPitcherIL(data) {
+  rawPitcherIL = data;
+  const isT = currentMode==='today';
+  const tbody = document.getElementById('pitcher-il-tbody');
+  if (!data.length) { tbody.innerHTML=`<tr class="loading-row"><td colspan="12" style="color:var(--muted)">尚未加入球員</td></tr>`; return; }
+  const sorted = sortRows(data, sortState.pil.col, sortState.pil.dir);
+  const thSort = (col,label) => { const st=sortState.pil; const arrow=st.col===col?(st.dir>0?'↑':'↓'):''; return `<th onclick="sortTable('pil','${col}')" style="cursor:pointer">${label}${arrow?` <span style="color:var(--accent)">${arrow}</span>`:''}`;};
+  document.getElementById('pitcher-il-thead').innerHTML=`<tr><th>POS</th><th onclick="sortTable('pil','name')" style="cursor:pointer">球員</th><th>對手</th>${thSort('ip','IP')}</th>${thSort('w','W')}</th>${thSort('hld','HLD')}</th>${thSort('sv','SV')}</th>${thSort('k','K')}</th>${thSort('hr','HR')}</th>${thSort('qs','QS')}</th>${thSort('era','ERA')}</th>${thSort('whip','WHIP')}</th></tr>`;
+  tbody.innerHTML = sorted.map((p,i)=>{
+    const s=isT?p.today:p.season;
+    const opp=scheduleCache[p.teamId]||'—';
+    const row=[s?dv(s.ip):'<span class="stat-dash">—</span>',s?gv(s.w):'<span class="stat-dash">—</span>',s?dv(s.hld):'<span class="stat-dash">—</span>',s?gv(s.sv):'<span class="stat-dash">—</span>',s?gv(s.k):'<span class="stat-dash">—</span>',s?dv(s.hr):'<span class="stat-dash">—</span>',s?gv(s.qs):'<span class="stat-dash">—</span>',s?gv(s.era,true):'<span class="stat-dash">—</span>',s?gv(s.whip,true):'<span class="stat-dash">—</span>'];
+    return `<tr style="animation-delay:${i*20}ms"><td>${badge(p)}</td><td><div class="player-name">${p.name}</div><div class="player-team">${p.team}</div></td><td><span class="opp">${opp}</span></td>${row.map(c=>`<td>${c}</td>`).join('')}</tr>`;
+  }).join('');
+}
+
+function renderBatterFA(data) {
+  rawBatterFA = data;
+  const isT = currentMode==='today';
+  const tbody = document.getElementById('batter-fa-tbody');
+  if (!data.length) {
+    tbody.innerHTML = `<tr class="loading-row"><td colspan="13" style="color:var(--muted)">尚未加入球員</td></tr>`;
+    return;
+  }
+  const sorted = sortRows(data, sortState.bfa.col, sortState.bfa.dir);
+  const thSort = (col,label) => { const st=sortState.bfa; const arrow=st.col===col?(st.dir>0?'↑':'↓'):''; return `<th onclick="sortTable('bfa','${col}')" style="cursor:pointer">${label}${arrow?` <span style="color:var(--accent)">${arrow}</span>`:''}`;};
+  document.getElementById('batter-fa-thead').innerHTML=`<tr><th>POS</th><th onclick="sortTable('bfa','name')" style="cursor:pointer">球員</th><th>對手</th>${thSort('ab','AB')}</th>${thSort('r','R')}</th>${thSort('h','H')}</th>${thSort('hr','HR')}</th>${thSort('rbi','RBI')}</th>${thSort('sb','SB')}</th>${thSort('bb','BB')}</th>${thSort('k','K')}</th>${thSort('avg','AVG')}</th>${thSort('ops','OPS')}</th></tr>`;
+  tbody.innerHTML = sorted.map((p,i)=>{
+    const s = isT ? p.today : p.season;
+    const opp = scheduleCache[p.teamId]||'—';
+    const row=[s?dv(s.ab):'<span class="stat-dash">—</span>',s?gv(s.r):'<span class="stat-dash">—</span>',s?gv(s.h):'<span class="stat-dash">—</span>',s?gv(s.hr):'<span class="stat-dash">—</span>',s?gv(s.rbi):'<span class="stat-dash">—</span>',s?gv(s.sb):'<span class="stat-dash">—</span>',s?dv(s.bb):'<span class="stat-dash">—</span>',s?dv(s.k):'<span class="stat-dash">—</span>',s?dv(s.avg):'<span class="stat-dash">—</span>',s?dv(s.ops):'<span class="stat-dash">—</span>'];
+    return `<tr style="animation-delay:${i*20}ms"><td>${badge(p)}</td><td><div class="player-name">${p.name}</div><div class="player-team">${p.team}</div></td><td><span class="opp">${opp}</span></td>${row.map(c=>`<td>${c}</td>`).join('')}</tr>`;
+  }).join('');
+}
+
+function renderPitcherFA(data) {
+  rawPitcherFA = data;
+  const isT = currentMode==='today';
+  const tbody = document.getElementById('pitcher-fa-tbody');
+  if (!data.length) {
+    tbody.innerHTML = `<tr class="loading-row"><td colspan="12" style="color:var(--muted)">尚未加入球員</td></tr>`;
+    return;
+  }
+  const sorted = sortRows(data, sortState.pfa.col, sortState.pfa.dir);
+  const thSort = (col,label) => { const st=sortState.pfa; const arrow=st.col===col?(st.dir>0?'↑':'↓'):''; return `<th onclick="sortTable('pfa','${col}')" style="cursor:pointer">${label}${arrow?` <span style="color:var(--accent)">${arrow}</span>`:''}`;};
+  document.getElementById('pitcher-fa-thead').innerHTML=`<tr><th>POS</th><th onclick="sortTable('pfa','name')" style="cursor:pointer">球員</th><th>對手</th>${thSort('ip','IP')}</th>${thSort('w','W')}</th>${thSort('hld','HLD')}</th>${thSort('sv','SV')}</th>${thSort('k','K')}</th>${thSort('hr','HR')}</th>${thSort('qs','QS')}</th>${thSort('era','ERA')}</th>${thSort('whip','WHIP')}</th></tr>`;
+  tbody.innerHTML = sorted.map((p,i)=>{
+    const s = isT ? p.today : p.season;
+    const opp = scheduleCache[p.teamId]||'—';
+    const row=[s?dv(s.ip):'<span class="stat-dash">—</span>',s?gv(s.w):'<span class="stat-dash">—</span>',s?dv(s.hld):'<span class="stat-dash">—</span>',s?gv(s.sv):'<span class="stat-dash">—</span>',s?gv(s.k):'<span class="stat-dash">—</span>',s?dv(s.hr):'<span class="stat-dash">—</span>',s?gv(s.qs):'<span class="stat-dash">—</span>',s?gv(s.era,true):'<span class="stat-dash">—</span>',s?gv(s.whip,true):'<span class="stat-dash">—</span>'];
+    return `<tr style="animation-delay:${i*20}ms"><td>${badge(p)}</td><td><div class="player-name">${p.name}</div><div class="player-team">${p.team}</div></td><td><span class="opp">${opp}</span></td>${row.map(c=>`<td>${c}</td>`).join('')}</tr>`;
+  }).join('');
+}
+
+async function loadFA() {
+  const bRes = await Promise.all(BATTER_FA.map(async p=>{
+    const [today,season]=await Promise.all([apiBatter(p.mlbId,'gameLog'),apiBatter(p.mlbId,'season')]);
+    return{...p,today,season};
+  }));
+  const pRes = await Promise.all(PITCHER_FA.map(async p=>{
+    const [today,season]=await Promise.all([apiPitcher(p.mlbId,'gameLog'),apiPitcher(p.mlbId,'season')]);
+    return{...p,today,season};
+  }));
+  const bILRes = await Promise.all(BATTER_IL.map(async p=>{
+    const [today,season]=await Promise.all([apiBatter(p.mlbId,'gameLog'),apiBatter(p.mlbId,'season')]);
+    return{...p,today,season};
+  }));
+  const pILRes = await Promise.all(PITCHER_IL.map(async p=>{
+    const [today,season]=await Promise.all([apiPitcher(p.mlbId,'gameLog'),apiPitcher(p.mlbId,'season')]);
+    return{...p,today,season};
+  }));
+  renderBatterFA(bRes);
+  renderPitcherFA(pRes);
+  renderBatterIL(bILRes);
+  renderPitcherIL(pILRes);
 }
 
 async function loadAll() {
@@ -451,6 +732,9 @@ async function loadAll() {
 
   document.getElementById('last-updated').textContent=`上次更新：${new Date().toLocaleTimeString('zh-TW')}`;
   btn.disabled=false;icon.className='';icon.textContent='↻';
+
+  // 載入 FA 數據
+  loadFA();
 }
 
 loadAll();
